@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { ExternalLink, Pencil, Trash2, CalendarPlus, XCircle, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react'
 import { Subscription } from '@/types/subscription'
-import { daysUntil, urgencyColor, urgencyBg, monthlyEquivalent, getActiveDate } from '@/lib/renewal'
+import { daysUntil, urgencyColor, urgencyBg, monthlyEquivalent, yearlyEquivalent, getActiveDate } from '@/lib/renewal'
 import { toNOK, formatNOK } from '@/lib/currency'
 import { downloadIcs } from '@/lib/ics'
 import { useSubscriptionStore } from '@/store/subscriptions'
@@ -38,9 +38,9 @@ export default function SubscriptionCard({ sub, rates }: Props) {
   const days = daysUntil(activeDate)
   const isCancelled = sub.status === 'cancelled'
 
-  const nokPerMonth = formatNOK(
-    monthlyEquivalent(toNOK(sub.price, sub.currency, rates), sub.billing_cycle)
-  )
+  const nokInBase = toNOK(sub.price, sub.currency, rates)
+  const nokPerMonth = formatNOK(monthlyEquivalent(nokInBase, sub.billing_cycle))
+  const nokPerYear = formatNOK(yearlyEquivalent(nokInBase, sub.billing_cycle))
 
   function daysLabel(): string {
     if (days === null) return ''
@@ -90,8 +90,10 @@ export default function SubscriptionCard({ sub, rates }: Props) {
             <p className="text-sm font-semibold text-gray-900">
               {sub.price} {sub.currency}
             </p>
-            {sub.billing_cycle !== 'one-time' && sub.currency !== 'NOK' && (
-              <p className="text-xs text-gray-400">{nokPerMonth}/mnd</p>
+            {sub.billing_cycle !== 'one-time' && (
+              <p className="text-xs text-gray-400">
+                {sub.currency !== 'NOK' ? `${nokPerYear}/år` : `${nokPerYear}/år`}
+              </p>
             )}
           </div>
 

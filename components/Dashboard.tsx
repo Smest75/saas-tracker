@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Download, Wand2, BookOpen } from 'lucide-react'
+import { Plus, Wand2, BookOpen, ClipboardCopy, Check } from 'lucide-react'
 import { useSubscriptionStore } from '@/store/subscriptions'
 import { getRates } from '@/lib/currency'
 import { computeTotals, daysUntil, getActiveDate } from '@/lib/renewal'
@@ -20,6 +20,13 @@ export default function Dashboard() {
   const [showForm, setShowForm] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [showPrompt, setShowPrompt] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  async function copyBackup() {
+    await navigator.clipboard.writeText(JSON.stringify(subscriptions, null, 2))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   useEffect(() => {
     getRates().then(setRates)
@@ -51,6 +58,16 @@ export default function Dashboard() {
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900">SubTracker</h1>
           <div className="flex items-center gap-2">
+            {subscriptions.length > 0 && (
+              <button
+                onClick={copyBackup}
+                title="Kopier backup til utklippstavle"
+                className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50"
+              >
+                {copied ? <Check size={15} className="text-green-600" /> : <ClipboardCopy size={15} />}
+                <span className="hidden sm:inline">{copied ? 'Kopiert!' : 'Backup'}</span>
+              </button>
+            )}
             <button
               onClick={() => setShowPrompt(true)}
               className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50"
