@@ -25,11 +25,30 @@ export default function ImportModal({ onClose, onShowPrompt }: Props) {
   const [saved, setSaved] = useState(false)
   const add = useSubscriptionStore((s) => s.add)
 
+  function cleanLlmOutput(raw: string): string {
+    let s = raw.trim()
+    // Strip markdown code fences: ```json ... ``` or ``` ... ```
+    s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
+    // Strip markdown link wrappers around the whole JSON block: [{...}](url)
+    // e.g. ChatGPT wraps entire output: [{"name":...}](encoded-url)
+    const mdLinkMatch = s.match(/^\[(\{[\s\S]*\})\]\(.*\)$/)
+    if (mdLinkMatch) s = mdLinkMatch[1]
+    // Fix markdown links inside string values: "[text](url)" → "url"
+    s = s.replace(/"\[([^\]]*)\]\(([^)]*)\)"/g, (_, _text, url) => `"${url}"`)
+    // Fix URL-encoded quotes in URLs that got mangled (e.g. %22 → nothing, trim)
+    s = s.replace(/"(https?:\/\/[^"]+)"/g, (match, url) => {
+      const clean = url.split('%22')[0].split('"')[0]
+      return `"${clean}"`
+    })
+    return s.trim()
+  }
+
   function parseJson() {
     setError(null)
     setParsed(null)
     try {
-      const raw = JSON.parse(json.trim())
+      const cleaned = cleanLlmOutput(json)
+      const raw = JSON.parse(cleaned)
       const data = Array.isArray(raw) ? raw[0] : raw
       if (!data.name || data.price === undefined) {
         setError('Mangler obligatoriske felt (name, price). Prøv å kjøre LLM-en på nytt.')
@@ -37,7 +56,7 @@ export default function ImportModal({ onClose, onShowPrompt }: Props) {
       }
       setParsed(data as ImportedSubscription)
     } catch {
-      setError('Ugyldig JSON. Sjekk at du har kopiert hele svaret fra LLM-en.')
+      setError('Ugyldig JSON. Sjekk at du har kopiert hele svaret fra LLM-en — inkludert { og }.')
     }
   }
 
