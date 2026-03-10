@@ -5,7 +5,7 @@ import './globals.css'
 const geist = Geist({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SubTracker',
+  title: 'Smests abbo-tracker',
   description: 'Hold oversikt over abonnementer og lisenskostnader',
 }
 
