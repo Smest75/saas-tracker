@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Wand2, BookOpen, ClipboardCopy, Check } from 'lucide-react'
+import { Plus, Wand2, BookOpen, ClipboardCopy, Check, ArchiveRestore } from 'lucide-react'
 import { useSubscriptionStore } from '@/store/subscriptions'
 import { getRates } from '@/lib/currency'
 import { computeTotals, daysUntil, getActiveDate } from '@/lib/renewal'
@@ -10,6 +10,7 @@ import SubscriptionCard from './SubscriptionCard'
 import SubscriptionForm from './SubscriptionForm'
 import ImportModal from './ImportModal'
 import PromptModal from './PromptModal'
+import RestoreModal from './RestoreModal'
 
 type Filter = 'all' | 'active' | 'cancelled'
 
@@ -21,6 +22,7 @@ export default function Dashboard() {
   const [showImport, setShowImport] = useState(false)
   const [showPrompt, setShowPrompt] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [showRestore, setShowRestore] = useState(false)
 
   async function copyBackup() {
     await navigator.clipboard.writeText(JSON.stringify(subscriptions, null, 2))
@@ -60,6 +62,14 @@ export default function Dashboard() {
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900">Smests abbo-tracker</h1>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowRestore(true)}
+              title="Gjenopprett fra backup"
+              className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50"
+            >
+              <ArchiveRestore size={15} />
+              <span className="hidden sm:inline">Gjenopprett</span>
+            </button>
             {subscriptions.length > 0 && (
               <button
                 onClick={copyBackup}
@@ -159,6 +169,7 @@ export default function Dashboard() {
           }}
         />
       )}
+      {showRestore && <RestoreModal onClose={() => setShowRestore(false)} />}
       {showImport && (
         <ImportModal
           onClose={() => setShowImport(false)}

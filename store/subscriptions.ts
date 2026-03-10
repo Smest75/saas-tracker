@@ -11,6 +11,7 @@ interface SubscriptionStore {
   update: (id: string, sub: Partial<Subscription>) => void
   remove: (id: string) => void
   cancel: (id: string) => void
+  restore: (subs: Subscription[]) => void
 }
 
 export const useSubscriptionStore = create<SubscriptionStore>()(
@@ -49,6 +50,7 @@ export const useSubscriptionStore = create<SubscriptionStore>()(
             s.id === id ? { ...s, status: 'cancelled' } : s
           ),
         })),
+      restore: (subs) => set({ subscriptions: subs }),
     }),
     { name: 'saas-tracker-subscriptions' }
   )
