@@ -47,10 +47,12 @@ export default function Dashboard() {
       return da - db
     })
 
-  const upcoming = active.filter((s) => {
-    const d = daysUntil(getActiveDate(s))
-    return d !== null && d >= 0 && d <= 30
-  })
+  const upcoming = active
+    .filter((s) => {
+      const d = daysUntil(getActiveDate(s))
+      return d !== null && d >= 0 && d <= 30
+    })
+    .sort((a, b) => (daysUntil(getActiveDate(a)) ?? 0) - (daysUntil(getActiveDate(b)) ?? 0))
 
   return (
     <div className="min-h-screen bg-gray-50">
