@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { Plus, Wand2, BookOpen, ClipboardCopy, Check, ArchiveRestore } from 'lucide-react'
 import { useSubscriptionStore } from '@/store/subscriptions'
 import { getRates } from '@/lib/currency'
-import { computeTotals, daysUntil, getActiveDate } from '@/lib/renewal'
+import { computeTotals, daysUntil, getActiveDate, monthlyEquivalent } from '@/lib/renewal'
+import { toNOK } from '@/lib/currency'
 import CostSummary from './CostSummary'
 import SubscriptionCard from './SubscriptionCard'
 import SubscriptionForm from './SubscriptionForm'
@@ -13,11 +14,13 @@ import PromptModal from './PromptModal'
 import RestoreModal from './RestoreModal'
 
 type Filter = 'all' | 'active' | 'cancelled'
+type Sort = 'renewal' | 'price-desc'
 
 export default function Dashboard() {
   const subscriptions = useSubscriptionStore((s) => s.subscriptions)
   const [rates, setRates] = useState<Record<string, number>>({ NOK: 1 })
   const [filter, setFilter] = useState<Filter>('active')
+  const [sort, setSort] = useState<Sort>('renewal')
   const [showForm, setShowForm] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [showPrompt, setShowPrompt] = useState(false)
@@ -44,6 +47,11 @@ export default function Dashboard() {
       return true
     })
     .sort((a, b) => {
+      if (sort === 'price-desc') {
+        const pa = monthlyEquivalent(toNOK(a.price, a.currency, rates), a.billing_cycle)
+        const pb = monthlyEquivalent(toNOK(b.price, b.currency, rates), b.billing_cycle)
+        return pb - pa
+      }
       const da = daysUntil(getActiveDate(a)) ?? 9999
       const db = daysUntil(getActiveDate(b)) ?? 9999
       return da - db
@@ -130,21 +138,38 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Filter tabs */}
-            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-4 w-fit">
-              {(['active', 'cancelled', 'all'] as Filter[]).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    filter === f
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {f === 'active' ? 'Aktive' : f === 'cancelled' ? 'Kansellerte' : 'Alle'}
-                </button>
-              ))}
+            {/* Filter tabs + sort */}
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+                {(['active', 'cancelled', 'all'] as Filter[]).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFilter(f)}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      filter === f
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {f === 'active' ? 'Aktive' : f === 'cancelled' ? 'Kansellerte' : 'Alle'}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+                {([['renewal', 'Fornyelse'], ['price-desc', 'Dyrest først']] as [Sort, string][]).map(([s, label]) => (
+                  <button
+                    key={s}
+                    onClick={() => setSort(s)}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      sort === s
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
