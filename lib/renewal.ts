@@ -1,4 +1,4 @@
-import { differenceInDays, parseISO, isValid, addMonths, addYears } from 'date-fns'
+import { differenceInDays, parseISO, isValid, addMonths, addYears, format } from 'date-fns'
 import { Subscription, BillingCycle } from '@/types/subscription'
 import { toNOK } from './currency'
 
@@ -64,12 +64,12 @@ function advanceToFuture(dateStr: string, cycle: BillingCycle): string {
   today.setHours(0, 0, 0, 0)
   let date = parseISO(dateStr)
   if (!isValid(date) || cycle === 'one-time') return dateStr
-  while (date < today) {
+  while (date <= today) {
     if (cycle === 'monthly') date = addMonths(date, 1)
     else if (cycle === 'quarterly') date = addMonths(date, 3)
     else if (cycle === 'yearly') date = addYears(date, 1)
   }
-  return date.toISOString().slice(0, 10)
+  return format(date, 'yyyy-MM-dd')
 }
 
 export function getActiveDate(sub: Subscription): string | null {
