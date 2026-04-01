@@ -31,7 +31,7 @@ export const useSubscriptionStore = create<SubscriptionStore>()(
               email: sub.email ?? null,
               trial_end_date: sub.trial_end_date ?? null,
               next_renewal: sub.next_renewal ?? '',
-              category: sub.category ?? 'personal',
+              category: sub.category ?? 'work',
             },
           ],
         })),

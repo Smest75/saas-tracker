@@ -58,7 +58,7 @@ export function computeTotals(
     const m = monthlyEquivalent(inNOK, s.billing_cycle)
     monthly += m
     yearly += yearlyEquivalent(inNOK, s.billing_cycle)
-    if ((s.category ?? 'personal') === 'work') workMonthly += m
+    if ((s.category ?? 'work') === 'work') workMonthly += m
     else personalMonthly += m
   }
   return { monthly, yearly, personalMonthly, workMonthly }

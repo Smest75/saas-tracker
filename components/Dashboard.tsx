@@ -46,7 +46,7 @@ export default function Dashboard() {
     .filter((s) => {
       if (filter === 'active' && s.status !== 'active') return false
       if (filter === 'cancelled' && s.status !== 'cancelled') return false
-      if (categoryFilter !== 'all' && (s.category ?? 'personal') !== categoryFilter) return false
+      if (categoryFilter !== 'all' && (s.category ?? 'work') !== categoryFilter) return false
       return true
     })
     .sort((a, b) => {

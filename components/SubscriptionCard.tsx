@@ -71,7 +71,7 @@ export default function SubscriptionCard({ sub, rates }: Props) {
               )}
             </div>
             <p className="text-xs text-gray-400 mt-0.5">
-              {(sub.category ?? 'personal') === 'work' ? 'Jobb' : 'Privat'}, {CYCLE_LABEL[sub.billing_cycle]}
+              {(sub.category ?? 'work') === 'work' ? 'Jobb' : 'Privat'}, {CYCLE_LABEL[sub.billing_cycle]}
             </p>
           </div>
 
