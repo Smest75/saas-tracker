@@ -15,12 +15,14 @@ import RestoreModal from './RestoreModal'
 
 type Filter = 'all' | 'active' | 'cancelled'
 type Sort = 'renewal' | 'price-desc'
+type CategoryFilter = 'all' | 'personal' | 'work'
 
 export default function Dashboard() {
   const subscriptions = useSubscriptionStore((s) => s.subscriptions)
   const [rates, setRates] = useState<Record<string, number>>({ NOK: 1 })
   const [filter, setFilter] = useState<Filter>('active')
   const [sort, setSort] = useState<Sort>('renewal')
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all')
   const [showForm, setShowForm] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [showPrompt, setShowPrompt] = useState(false)
@@ -42,8 +44,9 @@ export default function Dashboard() {
 
   const filtered = subscriptions
     .filter((s) => {
-      if (filter === 'active') return s.status === 'active'
-      if (filter === 'cancelled') return s.status === 'cancelled'
+      if (filter === 'active' && s.status !== 'active') return false
+      if (filter === 'cancelled' && s.status !== 'cancelled') return false
+      if (categoryFilter !== 'all' && (s.category ?? 'personal') !== categoryFilter) return false
       return true
     })
     .sort((a, b) => {
@@ -115,6 +118,8 @@ export default function Dashboard() {
               monthly={totals.monthly}
               yearly={totals.yearly}
               activeCount={active.length}
+              personalMonthly={totals.personalMonthly}
+              workMonthly={totals.workMonthly}
             />
 
             {upcoming.length > 0 && (
@@ -139,7 +144,7 @@ export default function Dashboard() {
             )}
 
             {/* Filter tabs + sort */}
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
               <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
                 {(['active', 'cancelled', 'all'] as Filter[]).map((f) => (
                   <button
@@ -170,6 +175,21 @@ export default function Dashboard() {
                   </button>
                 ))}
               </div>
+            </div>
+            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit mb-4">
+              {([['all', 'Alle'], ['personal', 'Privat'], ['work', 'Jobb']] as [CategoryFilter, string][]).map(([c, label]) => (
+                <button
+                  key={c}
+                  onClick={() => setCategoryFilter(c)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    categoryFilter === c
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
 
             <div className="space-y-2">

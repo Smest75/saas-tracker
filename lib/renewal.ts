@@ -47,16 +47,21 @@ export function yearlyEquivalent(price: number, cycle: BillingCycle): number {
 export function computeTotals(
   subscriptions: Subscription[],
   rates: Record<string, number>
-): { monthly: number; yearly: number } {
+): { monthly: number; yearly: number; personalMonthly: number; workMonthly: number } {
   const active = subscriptions.filter((s) => s.status === 'active')
   let monthly = 0
   let yearly = 0
+  let personalMonthly = 0
+  let workMonthly = 0
   for (const s of active) {
     const inNOK = toNOK(s.price, s.currency, rates)
-    monthly += monthlyEquivalent(inNOK, s.billing_cycle)
+    const m = monthlyEquivalent(inNOK, s.billing_cycle)
+    monthly += m
     yearly += yearlyEquivalent(inNOK, s.billing_cycle)
+    if ((s.category ?? 'personal') === 'work') workMonthly += m
+    else personalMonthly += m
   }
-  return { monthly, yearly }
+  return { monthly, yearly, personalMonthly, workMonthly }
 }
 
 function advanceToFuture(dateStr: string, cycle: BillingCycle): string {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { X } from 'lucide-react'
-import { Subscription, BillingCycle, ImportedSubscription } from '@/types/subscription'
+import { Subscription, BillingCycle, ImportedSubscription, SubscriptionCategory } from '@/types/subscription'
 import { useSubscriptionStore } from '@/store/subscriptions'
 
 interface Props {
@@ -32,6 +32,7 @@ export default function SubscriptionForm({ existing, onClose }: Props) {
     is_trial: existing?.is_trial ?? false,
     trial_end_date: existing?.trial_end_date ?? '',
     comment: existing?.comment ?? '',
+    category: existing?.category ?? 'personal' as SubscriptionCategory,
   })
 
   function set<K extends keyof typeof form>(key: K, value: typeof form[K]) {
@@ -51,6 +52,7 @@ export default function SubscriptionForm({ existing, onClose }: Props) {
       is_trial: form.is_trial,
       trial_end_date: form.is_trial && form.trial_end_date ? form.trial_end_date : null,
       comment: form.comment.trim(),
+      category: form.category,
     }
     if (existing) {
       update(existing.id, {
@@ -88,6 +90,26 @@ export default function SubscriptionForm({ existing, onClose }: Props) {
               onChange={(e) => set('name', e.target.value)}
               placeholder="GitHub Copilot"
             />
+          </div>
+
+          <div>
+            <label className={labelClass}>Kategori</label>
+            <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+              {(['personal', 'work'] as SubscriptionCategory[]).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => set('category', c)}
+                  className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    form.category === c
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {c === 'personal' ? 'Privat' : 'Jobb'}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

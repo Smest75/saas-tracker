@@ -1,5 +1,6 @@
 export type BillingCycle = 'monthly' | 'yearly' | 'quarterly' | 'one-time'
 export type SubscriptionStatus = 'active' | 'cancelled'
+export type SubscriptionCategory = 'personal' | 'work'
 
 export interface Subscription {
   id: string
@@ -14,6 +15,7 @@ export interface Subscription {
   trial_end_date: string | null
   comment: string
   status: SubscriptionStatus
+  category: SubscriptionCategory
   created_at: string
 }
 
@@ -28,4 +30,5 @@ export interface ImportedSubscription {
   is_trial: boolean
   trial_end_date: string | null
   comment: string
+  category: SubscriptionCategory
 }

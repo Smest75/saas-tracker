@@ -70,7 +70,9 @@ export default function SubscriptionCard({ sub, rates }: Props) {
                 <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium">Kansellert</span>
               )}
             </div>
-            <p className="text-xs text-gray-400 mt-0.5">{CYCLE_LABEL[sub.billing_cycle]}</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {(sub.category ?? 'personal') === 'work' ? 'Jobb' : 'Privat'}, {CYCLE_LABEL[sub.billing_cycle]}
+            </p>
           </div>
 
           {/* Renewal date */}
