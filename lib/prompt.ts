@@ -10,7 +10,8 @@ export const IMPORT_PROMPT = `Extract subscription details from the purchase/con
   "email": "account email or username",
   "is_trial": false,
   "trial_end_date": null,
-  "comment": ""
+  "comment": "",
+  "category": "personal | work"
 }
 
 Rules:
@@ -19,5 +20,6 @@ Rules:
 - If a field cannot be determined, use null
 - Leave comment as empty string
 - Use the exact domain from the email sender or links for url
+- Set category to "work" if the service is clearly business/professional, otherwise "personal"
 
 --- EMAIL BELOW ---`

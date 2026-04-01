@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { X, AlertCircle, Check } from 'lucide-react'
-import { ImportedSubscription } from '@/types/subscription'
+import { ImportedSubscription, SubscriptionCategory } from '@/types/subscription'
 import { useSubscriptionStore } from '@/store/subscriptions'
 import { format, parseISO, isValid } from 'date-fns'
 import { nb } from 'date-fns/locale'
@@ -21,6 +21,7 @@ function formatDate(dateStr: string | null): string {
 export default function ImportModal({ onClose, onShowPrompt }: Props) {
   const [json, setJson] = useState('')
   const [parsed, setParsed] = useState<ImportedSubscription | null>(null)
+  const [category, setCategory] = useState<SubscriptionCategory>('personal')
   const [error, setError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const add = useSubscriptionStore((s) => s.add)
@@ -54,7 +55,9 @@ export default function ImportModal({ onClose, onShowPrompt }: Props) {
         setError('Mangler obligatoriske felt (name, price). Prøv å kjøre LLM-en på nytt.')
         return
       }
-      setParsed(data as ImportedSubscription)
+      const sub = data as ImportedSubscription
+      setParsed(sub)
+      setCategory(sub.category === 'work' ? 'work' : 'personal')
     } catch {
       setError('Ugyldig JSON. Sjekk at du har kopiert hele svaret fra LLM-en — inkludert { og }.')
     }
@@ -62,7 +65,7 @@ export default function ImportModal({ onClose, onShowPrompt }: Props) {
 
   function save() {
     if (!parsed) return
-    add(parsed)
+    add({ ...parsed, category })
     setSaved(true)
     setTimeout(() => {
       onClose()
@@ -131,6 +134,22 @@ export default function ImportModal({ onClose, onShowPrompt }: Props) {
                   <span className="text-gray-900 font-medium text-right max-w-[60%] break-all">{value}</span>
                 </div>
               ))}
+              <div className="flex justify-between items-center px-4 py-2.5 text-sm">
+                <span className="text-gray-500">Kategori</span>
+                <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
+                  {(['personal', 'work'] as SubscriptionCategory[]).map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setCategory(c)}
+                      className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                        category === c ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      {c === 'personal' ? 'Privat' : 'Jobb'}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="flex gap-3">
               <button
