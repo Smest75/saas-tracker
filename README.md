@@ -1,9 +1,6 @@
-Timeføringssystem
-Superenkel webapp for timeføring bygget med v0 og Claude Code.
+Gir oversikt over løpende abonnementer. Som KI-rådgiver har jeg mange abonnementer, og det blir dyrt til sammen. Denne løsningen gir meg oversikt og informasjon om når hver enkelt abonnement blir fornyet. Det gir meg mulighet til å følge med og til å si opp de verktøyene jeg ikke lenger bruker i tide. Jeg la også inn et skille mellom jobb og privat, så jeg har i tillegg lagt inn  tjenester jeg bruker private, som Netflix, Storytel og Spotify, og månedlig støtte til veldedige organisasjoner.
 
-Bygget fordi jeg raskt trengte en måte å føre og fakturere timer på, selv om jeg forsøker å styre unna den modellen.
-Ingen innlogging eller sentral lagring av data. Alt ligger i nettleserens localStorage, så hvem som helst kan bruke denne.
-Lar meg logge timer per kunde/prosjekt og eksportere oppsummert liste og beløp til regnskap/faktureringsløsning.
+Bruker en litt hacky, men rask måte å legge inn nye abonnementer: Gir en prompt og ber deg om å lime inn tekst fra mailbekreftelsen du fikk på kjøpet i din LLM-chat (f.eks. ChatGPT, Gemini, Copilot eller Claude). LLM-chaten gir tilbake strukturert JSON-info, som brukeren limer inn i det ene input-feltet. Slik slipper bruker unna masse skjemafelter som må kopiere/limes-inn i eller tastes manuelt.
 
 –-
 
