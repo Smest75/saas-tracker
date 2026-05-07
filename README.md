@@ -1,3 +1,12 @@
+Timeføringssystem
+Superenkel webapp for timeføring bygget med v0 og Claude Code.
+
+Bygget fordi jeg raskt trengte en måte å føre og fakturere timer på, selv om jeg forsøker å styre unna den modellen.
+Ingen innlogging eller sentral lagring av data. Alt ligger i nettleserens localStorage, så hvem som helst kan bruke denne.
+Lar meg logge timer per kunde/prosjekt og eksportere oppsummert liste og beløp til regnskap/faktureringsløsning.
+
+–-
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
