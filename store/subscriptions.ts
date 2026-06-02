@@ -53,6 +53,6 @@ export const useSubscriptionStore = create<SubscriptionStore>()(
         })),
       restore: (subs) => set({ subscriptions: subs }),
     }),
-    { name: 'saas-tracker-subscriptions' }
+    { name: 'saas-tracker-subscriptions', skipHydration: true }
   )
 )
