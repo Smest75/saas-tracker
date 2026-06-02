@@ -8,10 +8,9 @@ interface RateCache {
 }
 
 async function fetchRates(): Promise<Record<string, number>> {
-  const res = await fetch('https://api.frankfurter.app/latest?base=NOK')
+  const res = await fetch('https://api.frankfurter.dev/v1/latest?base=NOK')
   if (!res.ok) throw new Error('Failed to fetch rates')
   const data = await res.json()
-  // data.rates are relative to NOK, but we need: how many NOK per currency
   // frankfurter returns: 1 NOK = X foreign
   // We want: 1 foreign = Y NOK → invert
   const inverted: Record<string, number> = { NOK: 1 }
