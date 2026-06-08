@@ -41,7 +41,7 @@ export async function getRates(): Promise<Record<string, number>> {
 }
 
 export function toNOK(amount: number, currency: string, rates: Record<string, number>): number {
-  const rate = rates[currency.toUpperCase()] ?? 1
+  const rate = rates[(currency ?? 'NOK').toUpperCase()] ?? 1
   return amount * rate
 }
 
